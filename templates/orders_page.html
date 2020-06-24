@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sistema</title>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css"></style>
+    <link rel="stylesheet" href="static/css/style.css"></style>
+</head>
+
+<body>
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #28a745;">
+            <a class="navbar-brand" href="#">Sistema de Compras</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Início</a>
+                  </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Meus pedidos</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Minha conta</a>
+                </li>
+              </ul>
+            </div>
+        </nav>
+        
+         <div id="orders-page-filters" class="filters-div">
+          <div class="form-inline">
+            <label for="filter-start-date">De&nbsp&nbsp</label>
+            <input class="datepicker" type="date" id="filter-start-date" name="trip-start"
+                  value="2018-07-22">
+                  <label for="filter-end-date">a&nbsp&nbsp</label>
+            <input class="datepicker" type="date" id="filter-end-date" name="trip-start"
+                  value="2018-07-22">
+            
+            <button class="btn btn-light" id="filter-start-button">Filtrar</button>
+            </div>
+        </div>
+
+
+        <div id="orders-page-table-container">
+
+         
+
+
+            <table id="table-orders-page" class="table table-hover">
+
+            </table>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="static/js/util.js"></script>
+    <script src="static/js/ordersPage.js"></script>
+</body>
+</html>

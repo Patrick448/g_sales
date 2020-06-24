@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sistema</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"></style>
+    <link rel="stylesheet" href="css/style.css"></style>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <nav class="navbar navbar-light bg-primary">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <h3 id="navTitle" class="navbar-text text-white" href="index.html">SISTEMA</h4>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container-fluid">
+            <div class="form-inline">
+                <div class="form-group">
+                    <input type="text" list="productDataList" class="form-control m-2" id="product" placeholder="Produto">
+                    <datalist id="productDataList">
+                        <option value="Abacaxi">
+                        <option value="Banana">
+                        <option value="Cenoura">
+                        <option value="Damasco">
+                        <option value="Ervilha">
+                      </datalist>
+                </div>
+        
+                <div class="form-group">
+                    <input type="text" class="form-control m-2" id="quant" placeholder="Quantidade">
+                </div>
+
+                <span id="formBtns">
+                        <Input id="add-button" type="image" title="Adicionar" class="imgActionBtn" src="/imgs/add.svg" height="30" width="30" onclick="addItem()"/>
+                </span>
+               
+
+
+            </div>
+
+            <div id="table-container">
+
+                <table id="productsTable" class="table">
+
+                </table>
+
+            </div>
+        <div>
+
+
+    </div>
+
+    <a href="list_page.html">List Page</a>
+    <script src="/js/main.js"></script>
+</body>
+</html>

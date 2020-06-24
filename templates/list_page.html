@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sistema</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css"></style>
+    <link rel="stylesheet" href="/static/css/style.css"></style>
+</head>
+
+<body>
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #28a745;">
+            <a class="navbar-brand" href="#">Sistema de Compras</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Início</a>
+                  </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="orders_page.html">Meus pedidos</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Minha conta</a>
+                </li>
+              </ul>
+            </div>
+        </nav>
+
+
+        <div class="container-fluid">
+          
+            <div class="order-view">
+
+                <div id="available-list">
+                    
+                    <div class="form-inline">
+
+                        <h4 id="available_title">Disponíveis</h2>
+                        <div class="form-group">
+                            <input type="text" class="form-control m-2" id="search-available" onkeyup="searchList()" placeholder="Pesquisar">
+                        </div>
+                    <!--
+                        <span id="formBtns">
+                                <Input id="add-button" type="image" title="Adicionar" class="imgActionBtn" src="/imgs/search2.svg" height="30" width="30" onclick="addItem()"/>
+                        </span>
+                    -->
+        
+                    </div>
+
+                    <div class="scroll">
+
+                        <table id="table-available" class="table table-hover">
+                        </table>
+                     </div>
+                </div>
+
+               
+
+                <div id="order-list">
+                    
+                    <h4 id="order_title">Selecionados</h2>
+                        <div class="scroll">
+                            <table id="order_table" class="table">
+                            </table>
+                        </div>
+                    <div id="order_footer">
+                        <input id="finish_btn" type="submit" class="btn btn-success" value="Concluir" display="none"/>
+                        <h3 id="total_value">R$ 0.00</h2>
+                    </div>
+                 </div>
+
+            </div>
+        <div>
+    </div>
+
+
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header-custom">
+                <span class="close">&times;</span>
+                <h2>Confirmar pedido</h2>
+            </div>
+            <div id="modal_body" class="modal-body">
+                <p>Banana</p>
+                <p>Some other text...</p>
+            </div>
+            <div class="modal-footer-custom">
+                <h2 id="modal_total" class="modal-total">Total: 0,00</h2>
+                <button id="modal_concluir" class="btn btn-light">Enviar Pedido</button>
+            </div>
+        </div>
+      
+      </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/static/js/util.js"></script>
+    <script src="/static/js/listPage.js"></script>
+
+</body>
+</html>

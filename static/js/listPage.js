@@ -1,5 +1,5 @@
 //*************************************************************************/
-//TO-DO: Create PRODUCT class  (id, desc, price)
+//TO-DO: Create PRODUCT class  (id, name, price)
 //       Create ORDER object (items' references lists, quant, add(), remove())
 //       Create AVAILABLE object (items list, gets)
 //       Study javascript classes and objects 
@@ -12,9 +12,9 @@
 
 var list =[]
 var listOrder = [
-   /* {"id":0,"desc": "Banana", "quant":"10", "price":"2.00"},
-    {"id":1, "desc": "Maçã", "quant":"5", "price":"2.00"},
-    {"id":2, "desc": "Uva", "quant":"15", "price":"2.00"}*/
+   /* {"id":0,"name": "Banana", "quant":"10", "price":"2.00"},
+    {"id":1, "name": "Maçã", "quant":"5", "price":"2.00"},
+    {"id":2, "name": "Uva", "quant":"15", "price":"2.00"}*/
 
   ];
 
@@ -51,17 +51,17 @@ window.onclick = function(event) {
 
 /*
 var list = [
-    {"id":0,"desc": "Banana", "price":"20.00"},
-    {"id":1, "desc": "Maçã", "price":"40.70"},
-    {"id":2, "desc": "Manga", "price":"50.60"},
-    {"id":3, "desc": "Laranja", "price":"25.00"},
-    {"id":4, "desc": "Batata", "price":"60.00"},
-    {"id":5, "desc": "Inhame", "price":"70.00"},
-    {"id":6, "desc": "Beterraba", "price":"30.00"},
-    {"id":7, "desc": "Cenoura", "price":"36.00"},
-    {"id":8, "desc": "Alface", "price":"2.00"},
-    {"id":9, "desc": "Couve", "price":"2.00"},
-    {"id":10, "desc": "Agrião", "price":"2.20"},
+    {"id":0,"name": "Banana", "price":"20.00"},
+    {"id":1, "name": "Maçã", "price":"40.70"},
+    {"id":2, "name": "Manga", "price":"50.60"},
+    {"id":3, "name": "Laranja", "price":"25.00"},
+    {"id":4, "name": "Batata", "price":"60.00"},
+    {"id":5, "name": "Inhame", "price":"70.00"},
+    {"id":6, "name": "Beterraba", "price":"30.00"},
+    {"id":7, "name": "Cenoura", "price":"36.00"},
+    {"id":8, "name": "Alface", "price":"2.00"},
+    {"id":9, "name": "Couve", "price":"2.00"},
+    {"id":10, "name": "Agrião", "price":"2.20"},
 ];
 */
 
@@ -84,10 +84,10 @@ $.get(
 
     var ids = 3;
 
-function Item(id, desc, quant){
+function Item(id, name, quant){
 
   this.id = id;
-  this.desc = desc;
+  this.name = name;
   this.quant = quant;
 
 }
@@ -132,7 +132,7 @@ function addItem(){
 
     var produto = $('#product').val();
     var quantidade = $('#quant').val();
-    list.unshift({"id": ids , "desc": produto, "quant": quantidade});
+    list.unshift({"id": ids , "name": produto, "quant": quantidade});
     ids ++;
 
     $('#product').val("");
@@ -154,7 +154,7 @@ function setAvailableList(){
   for(var key in list){
 
     tableAvailable += `<tr id=avail${list[key].id} data-id=${key} onClick="/*addToOrder(${key})*/">
-                        <td>${list[key].desc}</td>
+                        <td>${list[key].name}</td>
                         <td>${formatMoney(list[key].price)}</td>
                         <td id="input${list[key].id}">
                           <button class="btn btn-light" onClick="addToOrder(${list[key].id}); return false;"> Add </button>
@@ -206,7 +206,7 @@ function setOderList(){
     
 
     tableOrder += `<tr id=order${elementInList.id}>
-                      <td>${elementInList.desc}</td>
+                      <td>${elementInList.name}</td>
                       <td>${formatNumber(listOrder[key].quant)}</td>
                       <td>${formatMoney(elementInList.price)}</td>
                       <td>${formatMoney(elementInList.price*listOrder[key].quant)}</td>
@@ -244,7 +244,7 @@ function setOrderModal(){
     });
 
     modalTable += `<tr id=order${elementInList.id}>
-                    <td>${elementInList.desc}</td>
+                    <td>${elementInList.name}</td>
                     <td>${formatNumber(listOrder[key].quant)}</td>
                     <td>${formatMoney(elementInList.price)}</td>
                     <td>${formatMoney(elementInList.price*listOrder[key].quant)}</td>
@@ -308,7 +308,7 @@ function searchList() {
   
   }); */
   
-function addToOrder(key){
+function addToOrder(id){
 
 
   var quant = prompt("Quantidade");
@@ -316,7 +316,7 @@ function addToOrder(key){
 
   if(validNumber(quant)){
 
-    listOrder.push({"id": list[key].id, "quant": quant})
+    listOrder.push({"id": id, "quant": quant})
     setOderList();
 
   }
@@ -356,7 +356,7 @@ function submitOrder(){
       return item.id == listOrder[key].id;
     }); 
     
-    finalList.push({"id": elementInList.id, "desc": elementInList.desc, "quant": listOrder[key].quant, "price":elementInList.price })
+    finalList.push({"id": elementInList.id, "name": elementInList.name, "quant": listOrder[key].quant, "price":elementInList.price })
     totalValue += elementInList.price*listOrder[key].quant;
   }
 

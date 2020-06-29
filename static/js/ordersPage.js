@@ -139,7 +139,7 @@ function setOrderModal(order){
 
     for(var key in order.items){
         modalTable += `<tr id=order${order.items[key].id}>
-                    <td>${order.items[key].desc}</td>
+                    <td>${order.items[key].name}</td>
                     <td>${formatNumber(order.items[key].quant)}</td>
                     <td>${formatMoney(order.items[key].price)}</td>
                     <td>${formatMoney(order.items[key].price*order.items[key].quant)}</td>

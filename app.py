@@ -2,7 +2,7 @@ import json
 import logging
 from flask import Flask, request, render_template
 from data.data import DataManager
-from utils.db_manager import OrderDBManager, ProductDBManager
+from utils.db_manager import OrderDBManager, ProductDBManager, UserDBManager
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
                     datefmt='%d-%m-%Y:%H:%M:%S',
@@ -119,7 +119,7 @@ def test_get_products():
 
     return json.dumps(products, ensure_ascii=False).encode('utf8')
 
-@app.route('/x')
+
 def test_populate_available():
     ProductDBManager.add_avilable_product(1, 20.0)
     ProductDBManager.add_avilable_product(2, 35.0)
@@ -135,6 +135,12 @@ def test_populate_available():
 
     print(ProductDBManager.get_available_products())
 
+
+@app.route('/x')
+def test_users():
+    UserDBManager.create_table_user()
+
+    return json.dumps(UserDBManager.get_user(1))
 
 
 if __name__ == "__main__":

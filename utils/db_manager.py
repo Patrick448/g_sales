@@ -246,3 +246,75 @@ class ProductDBManager:
         return products_dict_list
 
 
+class UserDBManager:
+    DATABASE = "users.db"
+
+    @classmethod
+    def create_table_user(cls):
+        connection = sqlite3.connect(cls.DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS users (id integer primary key, email text, name text, level integer, password text)")
+        logger.info(f"Table users created in {cls.DATABASE} if it does not exist")
+        connection.commit()
+
+        connection.close()
+
+    @classmethod
+    def add_user(cls, email: str, name: str, level: int, password: str):
+
+        connection = sqlite3.connect(cls.DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO users (email, name, level, password) VALUES (?, ?, ?, ?)",
+                       (email, name, level, password))
+        logger.info(f"Saving user to {cls.DATABASE}. User: {email}")
+
+        connection.commit()
+        connection.close()
+
+    @classmethod
+    def get_user(cls, id: int):
+        connection = sqlite3.connect(cls.DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM users WHERE id=?", (id,))
+        user = cursor.fetchone()
+
+        user_dict = {
+                    "id": user[0],
+                    "email": user[1],
+                    "name": user[2],
+                    "level": user[3]
+                     }
+
+        logger.info(f"Getting user from {cls.DATABASE}")
+        connection.commit()
+        connection.close()
+
+
+        return user_dict
+
+    @classmethod
+    def get_all_users(cls) -> List[Dict]:
+        connection = sqlite3.connect(cls.DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM users")
+        users = cursor.fetchall()
+
+        users_dict_list = []
+
+        for user in users:
+            users_dict_list.append({"id": user[0],
+                                    "email": user[1],
+                                    "name": user[2],
+                                    "level": user[3]
+                                    })
+
+        logger.info(f"Getting all users from {cls.DATABASE}")
+        connection.commit()
+        connection.close()
+
+        return users_dict_list

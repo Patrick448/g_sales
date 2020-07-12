@@ -1,0 +1,33 @@
+/*reset css*/
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    text-decoration: none;
+  }
+
+.tab-row{
+
+    background-color: #c1f1d5;
+    padding-top: 70px;
+}
+
+.tab-button{
+    border-radius:15% 15% 0 0;
+    border: 0;
+    padding: 10px;
+    font-size: 15px;
+    background-color: whitesmoke;
+}
+
+.tab-button.active{
+    background-color: white;
+    border: 1px solid #ccc;
+    border-bottom: 0;
+}
+
+.tab-content{
+    background-color: white;
+    padding: 20px;
+}

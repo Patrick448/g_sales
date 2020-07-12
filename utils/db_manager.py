@@ -15,30 +15,26 @@ class OrderDBManager:
         cursor = connection.cursor()
 
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS orders (id integer primary key, user text, date integer, total real, items text)")
+            "CREATE TABLE IF NOT EXISTS orders (id integer primary key, user integer, date integer, total real, items text)")
         logger.info(f"Table orders created in {cls.DATABASE} if it does not exist")
         connection.commit()
         connection.close()
 
     @classmethod
-    def save_order(cls, user: str, order: Dict):
-
-        date = order["timeStamp"]
-        total = order["total"]
-        items_str = json.dumps(order["items"])
+    def save_order(cls, user: int, date, items, total):
 
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
 
         cursor.execute("INSERT INTO orders (user, date, total, items) VALUES (?, ?, ?, ?)",
-                       (user, date, total, items_str))
-        logger.info(f"Saving order to {cls.DATABASE}. User: {user} Order: {order}")
+                       (user, date, total, json.dumps(items)))
+        logger.info(f"Saving order to {cls.DATABASE}. User: {user}.")
 
         connection.commit()
         connection.close()
 
     @classmethod
-    def get_all_orders(cls) -> List[Dict]:
+    def get_all_orders(cls) -> List[Tuple]:
 
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
@@ -46,24 +42,14 @@ class OrderDBManager:
         cursor.execute("SELECT * FROM orders")
         orders = cursor.fetchall()
 
-        orders_dict_list = []
-
-        for order in orders:
-            orders_dict_list.append({"order_id": order[0],
-                                     "user": order[1],
-                                     "timeStamp": order[2],
-                                     "total": order[3],
-                                     "items": json.loads(order[4])
-                                     })
-
         logger.info(f"Getting all orders from {cls.DATABASE}")
         connection.commit()
         connection.close()
 
-        return orders_dict_list
+        return orders
 
     @classmethod
-    def get_all_orders_by_user(cls, user_id: str) -> List[Dict]:
+    def get_all_orders_by_user(cls, user_id: int) -> List[Tuple]:
 
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
@@ -76,11 +62,12 @@ class OrderDBManager:
         connection.commit()
         connection.close()
 
-        return cls.db_result_to_order_dict_list(orders)
+        return orders
+        
 
     @classmethod
-    def get_order_by_date(cls, user_id: str, time_stamp: int = None, time_from: int = None, time_to: int = None) -> \
-            List[Dict]:
+    def get_order_by_date(cls, user_id: int, time_stamp: int = None, time_from: int = None, time_to: int = None) -> \
+            List[Tuple]:
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
 
@@ -96,10 +83,11 @@ class OrderDBManager:
         connection.commit()
         connection.close()
 
-        return cls.db_result_to_order_dict_list(results)
+        return results
+
 
     @classmethod
-    def get_order_by_id(cls, user_id: str, order_id: int) -> List[Dict]:
+    def get_order_by_id(cls, user_id: int, order_id: int) -> List[Tuple]:
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
 
@@ -110,7 +98,7 @@ class OrderDBManager:
         connection.commit()
         connection.close()
 
-        return cls.db_result_to_order_dict_list(results)
+        return results
 
     @staticmethod
     def db_result_to_order_dict_list(results):
@@ -154,25 +142,31 @@ class ProductDBManager:
         connection.close()
 
     @classmethod
-    def add_product(cls, product: Dict):
-
-        name = product["name"]
-        category = product["category"]
-        unit = product["unit"]
+    def add_product(cls, name, category, unit):
 
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
 
         cursor.execute("INSERT INTO products (name, category, unit) VALUES (?, ?, ?)",
                        (name, category, unit))
-        logger.info(f"Saving product to {cls.DATABASE}. Product: {product}")
+        logger.info(f"Saving product to {cls.DATABASE}. Product: {name}")
 
         connection.commit()
         connection.close()
 
     @classmethod
     def get_product(cls, product_id: int):
-        pass
+        connection = sqlite3.connect(cls.DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM products WHERE id=?", (product_id,))
+        product = cursor.fetchone()
+
+        logger.info(f"Getting product from {cls.DATABASE}")
+        connection.commit()
+        connection.close()
+
+        return product
 
     @classmethod
     def get_all_products(cls) -> List[Dict]:
@@ -194,6 +188,8 @@ class ProductDBManager:
         logger.info(f"Getting all products from {cls.DATABASE}")
         connection.commit()
         connection.close()
+
+        return products
 
         return products_dict_list
 
@@ -243,6 +239,8 @@ class ProductDBManager:
         connection.commit()
         connection.close()
 
+        return products
+
         return products_dict_list
 
 
@@ -282,39 +280,38 @@ class UserDBManager:
         cursor.execute("SELECT * FROM users WHERE id=?", (id,))
         user = cursor.fetchone()
 
-        user_dict = {
-                    "id": user[0],
-                    "email": user[1],
-                    "name": user[2],
-                    "level": user[3]
-                     }
+        logger.info(f"Getting user from {cls.DATABASE}")
+        connection.commit()
+        connection.close()
+
+        return user
+
+    @classmethod
+    def get_user_by_email(cls, email: str) -> Dict:
+        connection = sqlite3.connect(cls.DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM users WHERE email=?", (email,))
+        user = cursor.fetchone()
 
         logger.info(f"Getting user from {cls.DATABASE}")
         connection.commit()
         connection.close()
 
+        return user
 
-        return user_dict
 
     @classmethod
-    def get_all_users(cls) -> List[Dict]:
+    def get_all_users(cls) -> List[Tuple]:
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
 
         cursor.execute("SELECT * FROM users")
         users = cursor.fetchall()
 
-        users_dict_list = []
-
-        for user in users:
-            users_dict_list.append({"id": user[0],
-                                    "email": user[1],
-                                    "name": user[2],
-                                    "level": user[3]
-                                    })
-
         logger.info(f"Getting all users from {cls.DATABASE}")
         connection.commit()
         connection.close()
 
-        return users_dict_list
+        return users
+

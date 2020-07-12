@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenSales</title>
+    <title>Painel do Administrador</title>
+    <link rel="stylesheet" href="/static/css/tabs-style.css">
     <link rel="stylesheet" href="/static/css/main-style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
 </head>
 <body>
-
     <nav class="menu">
         <div class="nav-left">
             <h1 class="nav-title">GreenSales</h1> 
@@ -28,23 +26,22 @@
             </a>
         </div>
     </nav>
-    <div class="main-menu">
-        <a href="{{ url_for('new_order_page') }}">
-            <div class="menu-item">
-                <p>Fazer pedido</p>
-            </div>
-        </a>
-        <a href="{{ url_for('orders_history') }}">
-            <div class="menu-item">
-                <p>Meus pedidos</p>
-            </div>
-        </a>
-        <a href="#">
-            <div class="menu-item">
-                <p>Minha conta</p>
-            </div>
-        </a>
+    <div class="main-view">
+        <div class="tab-row">
+            <button class="tab-button" onclick="openTab(event, 'tab-pedidos')">Pedidos</button>
+            <button class="tab-button" onclick="openTab(event, 'tab-precos')">Preços</button>
+            <button class="tab-button" onclick="openTab(event, 'tab-outros')">Outros</button>
+        </div>
+        <div class="tab-content" id="tab-pedidos">
+            <h1>Pedidos</h1>
+        </div>
+        <div class="tab-content" id="tab-precos">
+            <h1>Preços</h1>
+        </div>
+        <div class="tab-content" id="tab-outros">
+            <h1>Outros</h1>
+        </div>
     </div>
-    <script src="/static/js/loginPage.js"></script>
+    <script src="/static/js/tabs.js"></script>
 </body>
 </html>

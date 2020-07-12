@@ -46,8 +46,8 @@ function setOrdersTable(){
 
         let pedido = orderList[key];
 
-        tableOrders += `<tr id=order-page-${pedido.order_id} data-timestamp="${pedido.timeStamp}" onClick="orderInfo(${pedido.order_id})">
-                            <td>${pedido.order_id}</td>
+        tableOrders += `<tr id=order-page-${pedido.id} data-timestamp="${pedido.timeStamp}" onClick="orderInfo(${pedido.id})">
+                            <td>${pedido.id}</td>
                             <td>${formattedDate(pedido.timeStamp)}</td>
                             <td>R$ ${formatMoney(pedido.total)}</td>
                         </tr>`;
@@ -112,7 +112,7 @@ function startFilter(){
 function orderInfo(id){
 
     let elementInList = orderList.find(function(item){
-      return item.order_id == id;
+      return item.id == id;
     });
 
 

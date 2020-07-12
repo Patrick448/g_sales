@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenSales</title>
+    <link rel="stylesheet" href="/static/css/main-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+    <nav class="menu">
+        <div class="nav-left">
+            <h1 class="nav-title">GreenSales</h1> 
+            <ul class="nav-list">
+                <li class="list-item"><a href="{{ url_for('orders_history') }}">Meus pedidos</a></li>
+                <li class="list-item"><a href="#">Minha conta</a></li>
+                <li class="list-item"><a href="{{ url_for('new_order_page') }}">Fazer pedido</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="#">
+                <p>{{ current_user.name }}</p>
+            </a>
+            <a href="{{ url_for('logout') }}">
+                <p>-  sair</p>
+            </a>
+        </div>
+    </nav>
+    <div class="main-menu">
+        <a href="{{ url_for('new_order_page') }}">
+            <div class="menu-item">
+                <p>Fazer pedido</p>
+            </div>
+        </a>
+        <a href="{{ url_for('orders_history') }}">
+            <div class="menu-item">
+                <p>Meus pedidos</p>
+            </div>
+        </a>
+        <a href="#">
+            <div class="menu-item">
+                <p>Minha conta</p>
+            </div>
+        </a>
+    </div>
+</body>
+</html>

@@ -11,11 +11,7 @@
     <nav class="menu">
         <div class="nav-left">
             <h1 class="nav-title">GreenSales</h1> 
-            <ul class="nav-list">
-                <li class="list-item"><a href="{{ url_for('orders_history') }}">Meus pedidos</a></li>
-                <li class="list-item"><a href="#">Minha conta</a></li>
-                <li class="list-item"><a href="{{ url_for('new_order_page') }}">Fazer pedido</a></li>
-            </ul>
+           
         </div>
         <div class="nav-right">
             <a href="#">
@@ -28,20 +24,73 @@
     </nav>
     <div class="main-view">
         <div class="tab-row">
+            <button class="tab-button" onclick="openTab(event, 'tab-hoje')">Hoje</button>
             <button class="tab-button" onclick="openTab(event, 'tab-pedidos')">Pedidos</button>
             <button class="tab-button" onclick="openTab(event, 'tab-precos')">Preços</button>
-            <button class="tab-button" onclick="openTab(event, 'tab-outros')">Outros</button>
+            <button class="tab-button" onclick="openTab(event, 'tab-clientes')">Clientes</button>
         </div>
+        <div class="tab-content" id="tab-hoje">
+            <h1>Hoje</h1>
+        </div>
+        
         <div class="tab-content" id="tab-pedidos">
-            <h1>Pedidos</h1>
+            <div>
+                <div class="filter-div">
+                    <label for="filter-start-date">De&nbsp&nbsp</label>
+                    <input class="datepicker" type="date" id="filter-start-date" name="trip-start"
+                        value="2018-07-22">
+                        <label for="filter-end-date">a&nbsp&nbsp</label>
+                    <input class="datepicker" type="date" id="filter-end-date" name="trip-start"
+                        value="2018-07-22">
+
+                    <label for="filter-customer">Cliente&nbsp&nbsp</label>
+                    <input class="text-input" type="text" id="filter-customer" name="trip-start">
+
+                    <label for="filter-order-num">Pedido&nbsp&nbsp</label>
+                    <input class="text-input" type="text" id="filter-order-num" name="trip-start">
+
+                    <button class="btn btn-light" id="filter-start-button">Filtrar</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="table" id="hoje-table">
+                
+                </table>
+            </div>
+              
+            <div id="order-modal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header-custom">
+                        <span class="close">&times;</span>
+                        <h2 class="modal-title" id="order-modal-title">Ver pedido</h2>
+                    </div>
+                    <div id="modal_body" class="modal-body">
+                        <p>Banana</p>
+                        <p>Some other text...</p>
+                    </div>
+                    <div class="modal-footer-custom">
+                        <h2 id="modal_total" class="modal-total">Total: 0,00</h2>
+                        <button id="modal_concluir" class="btn btn-light">Enviar Pedido</button>
+                    </div>
+                </div>
+            </div>
         </div>
+
         <div class="tab-content" id="tab-precos">
             <h1>Preços</h1>
         </div>
-        <div class="tab-content" id="tab-outros">
+
+        <div class="tab-content" id="tab-clientes">
             <h1>Outros</h1>
         </div>
+
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="/static/js/tabs.js"></script>
+    <script src="static/js/util.js"></script>
+    <script src="/static/js/adminPanel.js"></script>
+
 </body>
 </html>

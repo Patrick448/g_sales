@@ -1,14 +1,18 @@
 let startFilterButton = document.getElementById("filter-start-button");
-startFilterButton.onclick = get_orders_by_date_filter;
+startFilterButton.onclick = filterOrders; // get_orders_by_date_filter; 
 
 let startDatePicker = document.getElementById("filter-start-date");
 let endDatePicker = document.getElementById("filter-end-date");
+let orderNumInput = document.getElementById("filter-order-num");
+let customerNameInput = document.getElementById("filter-customer");
+
+
 
 startDatePicker.valueAsNumber = new Date();
 endDatePicker.valueAsNumber = new Date();
 
 let modalSpan = document.getElementsByClassName("close")[0];
-let modal = document.getElementById("myModal");
+let modal = document.getElementById("order-modal");
 let modalFinish = document.getElementById("modal_concluir");
 let modalTitle = document.getElementById("order-modal-title");
 
@@ -21,32 +25,26 @@ modalSpan.onclick = function() {
 }
 
 
-$.get(
-    "/get-all-orders",
-    function(data) {
-       parsed_data = JSON.parse(data)
-       orderList = parsed_data
-       setOrdersTable()
-    }
-);
 
 function setOrdersTable(){
 
     let tableOrders=`<thead class="thead-light">
                         <tr>
                         <th scope="col">Pedido</th>
+                        <th scope="col">Cliente</th>
                         <th scope="col">Data</th>
                         <th scope="col">Valor</th>
                         </tr>
-                        </thead>`;
+                        </thead><tbody>`;
 
 
     for(key in orderList){
 
         let pedido = orderList[key];
 
-        tableOrders += `<tr id=order-page-${pedido.id} data-timestamp="${pedido.timeStamp}" onClick="orderInfo(${pedido.id})">
+        tableOrders += `<tr id=order-page-${pedido.id} data-timestamp="${pedido.timeStamp}" onClick="orderInfo(${pedido.id})">    
                             <td>${pedido.id}</td>
+                            <td>${pedido.user_name}</td>
                             <td>${formattedDate(pedido.timeStamp)}</td>
                             <td>R$ ${formatMoney(pedido.total)}</td>
                         </tr>`;
@@ -54,36 +52,8 @@ function setOrdersTable(){
     }
   
     tableOrders+= '</tbody>';
-    document.getElementById("table-orders-page").innerHTML=tableOrders;
+    document.getElementById("hoje-table").innerHTML=tableOrders;
 
-}
-
-//Old version, keep in case the new one goes wrong
-function startFilter(){
-
-    console.log("START FILTER");
-
-    let startDate, endDate, table, tr, td, i, timeStamp;
-    startDate = document.getElementById("filter-start-date").valueAsNumber;
-    endDate = document.getElementById("filter-end-date").valueAsNumber;
-    table = document.getElementById("table-orders-page");
-    tr = table.getElementsByTagName("tr");
-    
-    let dayInMillis = 86400000;
-    console.log(tr);
-
-    for(i=1; i<tr.length; i++){
-         
-        timeStamp = Number(tr[i].dataset.timestamp);
-
-        if(timeStamp >= startDate && timeStamp < endDate + dayInMillis){
-           tr[i].style.display = "";
-             
-        }else{
-            tr[i].style.display = "none";
-          
-        }
-     }
 }
 
 function orderInfo(id){
@@ -134,6 +104,27 @@ function setOrderModal(order){
 
 }
 
+
+function filterOrders(){
+  let dayInMillis = 86400000;
+  let timeFrom=startDatePicker.valueAsNumber
+  let timeTo=endDatePicker.valueAsNumber+dayInMillis
+  let customerName = customerNameInput.value
+  let orderNum = orderNumInput.value
+
+   $.ajax({
+      type:"GET",
+      url:`/admin_get_orders/filter/?time_from=${timeFrom}&time_to=${timeTo}&name=${customerName}&num=${orderNum}`,
+      success: function(data){
+          parsed_data = JSON.parse(data)
+          orderList = parsed_data
+          setOrdersTable()
+
+      }
+  });
+
+}
+
 function get_orders_by_date_filter(){
 
     let dayInMillis = 86400000;
@@ -142,7 +133,7 @@ function get_orders_by_date_filter(){
 
      $.ajax({
         type:"GET",
-        url:`/get_orders/by_date/${timeFrom}+${timeTo}`,
+        url:`/admin_get_orders/by_date/${timeFrom}+${timeTo}`,
         success: function(data){
             parsed_data = JSON.parse(data)
             orderList = parsed_data

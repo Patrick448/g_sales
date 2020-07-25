@@ -1,5 +1,6 @@
 import json
 import logging
+import datetime
 from flask import Flask, request, render_template, redirect, flash, url_for
 from data.data import DataManager
 from utils.db_manager import OrderDBManager, ProductDBManager, UserDBManager
@@ -8,7 +9,7 @@ from data.user import User
 from data.user_manager import UserManager
 from data.product_manager import ProductManager
 from data.order_manager import OrderManager
-import pickle
+
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
                     datefmt='%d-%m-%Y:%H:%M:%S',
@@ -27,6 +28,13 @@ ProductDBManager.create_table_products()
 ProductDBManager.create_table_available()
 UserDBManager.create_table_user()
 
+def admin_level_required(func):
+    def secure_func():
+        if current_user.level > 0:
+            return redirect(url_for("login"))
+        return func
+
+    return secure_func
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -119,12 +127,12 @@ def save_order():
 @app.route('/save-order', methods=['POST'])
 def save_order_db():
     order = request.get_json()['order']
-    date = order['timeStamp']
+    date = int(datetime.datetime.now().timestamp()*1000)
     items = order['items']
     total = order['total']
 
-    OrderManager.save_order(1, date, items, total)
-
+    OrderManager.save_order(int(current_user.get_id()), date, items, total)
+    
     return "1"
 
 
@@ -136,15 +144,15 @@ def orders_history():
 
 @app.route('/get-all-orders')
 def get_all_orders():
-    orders = OrderManager.get_all_orders_by_user(1)
+    orders = OrderManager.get_orders(user_id=int(current_user.get_id()))
     orders_dicts = [order.to_dict() for order in orders]
-
+    
     return json.dumps(orders_dicts, ensure_ascii=False).encode('utf8')
 
 
 @app.route('/get_orders/by_id/<int:order_id>')
 def get_orders_filter(order_id):
-    order = OrderManager.get_order_by_id(1, order_id)
+    order = OrderManager.get_order_by_id(int(current_user.get_id()), order_id)
     order_dict = order.to_dict()
 
     return json.dumps(order_dict, ensure_ascii=False).encode('utf8')
@@ -152,11 +160,31 @@ def get_orders_filter(order_id):
 
 @app.route('/get_orders/by_date/<int:time_from>+<int:time_to>')
 def get_orders_by_date(time_from, time_to):
-    orders = OrderManager.get_orders_by_date(user_id=1, time_from=time_from, time_to=time_to)
+    
+    orders = OrderManager.get_orders_by_date(user_id=int(current_user.get_id()), time_from=time_from, time_to=time_to)
     orders_dicts = [order.to_dict() for order in orders]
 
     return json.dumps(orders_dicts, ensure_ascii=False).encode('utf8')
 
+@app.route('/admin_get_orders/by_date/<int:time_from>+<int:time_to>')
+def get_orders_admin(time_from, time_to):
+    orders = OrderManager.get_orders(time_from=time_from, time_to=time_to)
+    orders_dicts = [order.to_dict() for order in orders]
+
+    return json.dumps(orders_dicts, ensure_ascii=False).encode('utf8')
+
+
+@app.route('/admin_get_orders/filter/')
+def get_orders_filter_admin():
+    time_from = request.args.get("time_from")
+    time_to = request.args.get("time_to")
+    name = request.args.get("name")
+    order_id = request.args.get("num")
+
+    orders = OrderManager.get_orders(user_name=name, order_id=order_id, time_from=time_from, time_to=time_to)
+    orders_dicts = [order.to_dict() for order in orders]
+
+    return json.dumps(orders_dicts, ensure_ascii=False).encode('utf8')
 
 @app.route('/verify-order', methods=['POST'])
 def verify_order():
@@ -224,8 +252,8 @@ def test_users():
     return json.dumps(UserDBManager.get_user(1))
 
 @app.route('/x')
-def test_products():
-    pass
+def test():
+    return f"{int(datetime.datetime.now().timestamp()*1000)}"
 
 if __name__ == "__main__":
     app.run(debug=True)

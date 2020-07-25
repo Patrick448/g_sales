@@ -26,9 +26,9 @@ var modalSpan = document.getElementsByClassName("close")[0];
 
 
 submitOrderBtn.onclick = function(){
-
 submitOrder()
 }
+
 // When the user clicks the button, open the modal 
 finishBtn.onclick = function() {
   modal.style.display = "block";
@@ -69,13 +69,8 @@ var list = [
 $.get(
     "/pedido/get-list",
     function(data) {
-       //alert('page content: ' + JSON.stringify(data));
        parsed_data = JSON.parse(data)
        list = parsed_data
-       /*
-       for(key in parsed_data){
-           list.push(data[key])
-       }*/
        setAvailableList();
     }
 );
@@ -167,21 +162,6 @@ function setAvailableList(){
 
 function buttonToTextbox(id){
 }
-/*function textboxToButton(id){
-
-
-  $("#" + id).keyup(function(event) {
-    if (event.keyCode === 13) {
-       
-      var buttonHtml =  `<input type="submit" class="btn btn-light" value="Add" onClick="buttonToTextbox(${id})"/>`;
-      document.getElementById(id).innerHTML=buttonHtml;
-
-    }
-  });
-
-
-}*/
-
 
 function setOderList(){
 
@@ -253,7 +233,6 @@ function setOrderModal(){
     totalValue += elementInList.price*listOrder[key].quant;
   }
 
-
   modalTable+= `  </tbody>
                 </table>`;
 
@@ -262,11 +241,6 @@ function setOrderModal(){
  document.getElementById("modal_total").innerHTML= "R$ "+formatMoney(totalValue);
 
 } 
-
-
-function editItem(id){
-
-}
 
 function searchList() {
     // Declare variables
@@ -292,21 +266,6 @@ function searchList() {
     }
   }
 
-
- /* $(document).ready(function(){
-
-    $('#table-available').find('tr').click( function(){
-
-        listOrder.push(list[$(this).attr("data-id")]);
-        alert('You clicked row ' + $(this).attr("data-id"));
-        //só funciona a primeira vez quando tem esse comando:
-        //acho que é porque ele redefine a lista sem o evento do clique
-        setAvailableList();
-
-      
-    });
-  
-  }); */
   
 function addToOrder(id){
 

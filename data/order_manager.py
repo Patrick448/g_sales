@@ -29,3 +29,9 @@ class OrderManager:
     def get_order_by_id(cls, user_id: int, order_id: int) -> Order:
         raw_order = OrderDBManager.get_order_by_id(user_id, order_id)   
         return Order(*raw_order)
+
+    @classmethod
+    def get_orders(cls, order_id: int = None, user_id: int = None, user_name:str = None,  time_stamp: int = None, time_from: int = None, time_to: int = None) -> List[Order]:
+        raw_orders = OrderDBManager.get_orders(order_id=order_id, time_stamp=time_stamp, user_name = user_name, time_from=time_from, time_to=time_to)
+        orders = [Order(*raw_order) for raw_order in raw_orders]
+        return orders

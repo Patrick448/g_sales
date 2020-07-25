@@ -58,6 +58,8 @@
     color: white;
 }
 
+/*HOME SCREEN STYLE*/
+
 .main-menu{
     font-size: 20px;
     display: grid;
@@ -83,4 +85,140 @@
     transform: scale(1.1);
     transition: transform .2s;
 
+}
+
+
+.filter-div {
+
+    padding-top: 15px;
+    padding-bottom: 15px;
+
+}
+
+
+/*ADMIN PANEL GENERAL*/
+
+
+.table-container{
+    display: inline-block;
+    overflow-y: scroll;
+    height: 420px;
+}
+
+
+.modal{
+    display: none;
+}
+/*MODAL GENERAL STYLE*/
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+    
+  /* Modal Content */
+  .modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+  }
+  
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+  }
+  
+  /* The Close Button */
+  .close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .modal-header-custom {
+    padding: 10px 16px;
+    background-color: #5cb85c;
+    color: white;
+    
+  }
+  
+  .modal-body {
+    overflow-y: scroll;
+    height: 300px;  
+    padding: 0px 0px;}
+  
+  .modal-footer-custom {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background-color: #5cb85c;
+    color: white;
+  
+  }
+
+/*TABLES GENERAL STYLE*/
+
+
+table{
+    border-collapse: collapse;
+    width: 90vw;
+}
+
+table thead{
+    background-color: #c1f1d5;
+    position: sticky;
+    top: 0;
+}
+
+table th {
+    text-align: left;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 10px;
+}
+
+table tbody tr{
+   border-bottom: solid 1px lightgray;
+}
+
+table tbody tr:hover{
+    background-color: whitesmoke; 
+ }
+
+table td{
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 10px;
 }

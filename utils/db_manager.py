@@ -71,6 +71,7 @@ class OrderDBManager:
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
 
+        
         if time_stamp is not None:
             cursor.execute("SELECT * FROM orders WHERE user=? AND date=?", (user_id, time_stamp))
         elif time_from is not None and time_to is not None:
@@ -99,6 +100,53 @@ class OrderDBManager:
         connection.close()
 
         return results
+
+    @classmethod
+    def get_orders(cls, order_id:int = None, user_id: int = None, user_name: str = None, time_stamp: int = None, time_from: int = None, time_to: int = None) -> \
+            List[Tuple]:
+        
+        sqlite_command = """SELECT orders.id, user, date, total, items, users.name
+                            FROM orders LEFT JOIN users_db.users ON orders.user = users.id 
+                            WHERE """
+        command_list = []
+        command_tupple = tuple()
+
+        connection = sqlite3.connect(cls.DATABASE)
+        cursor = connection.cursor()
+        
+        cursor.execute("ATTACH DATABASE ? AS users_db", ("users.db", ))
+
+        if user_id:
+            command_list.append("users.id=?")
+            command_tupple += (user_id,)
+        
+        if user_name:
+            command_list.append("users.name=?")
+            command_tupple += (user_name,)
+
+        if order_id:
+            command_list.append("orders.id=?")
+            command_tupple += (order_id,)
+
+        elif time_from and time_to:
+            command_list.append("date>=? AND date<=?")
+            command_tupple += (time_from, time_to)
+
+        
+        sqlite_command += " AND ".join(command_list)
+        print(sqlite_command)
+        cursor.execute(sqlite_command, command_tupple)
+        results = cursor.fetchall()
+
+
+        logger.info(f'''Getting all orders from {cls.DATABASE} 
+                     {f'in time {time_stamp}' if time_stamp else f'from {time_from} to {time_to}'}''')
+        connection.commit()
+        connection.close()
+
+        return results
+
+
 
     @staticmethod
     def db_result_to_order_dict_list(results):
@@ -191,7 +239,6 @@ class ProductDBManager:
 
         return products
 
-        return products_dict_list
 
     @classmethod
     def add_avilable_product(cls, id: int, price: float):
@@ -241,7 +288,6 @@ class ProductDBManager:
 
         return products
 
-        return products_dict_list
 
 
 class UserDBManager:

@@ -20,7 +20,6 @@ class User(UserMixin):
         user_dict = {'id': self.id,
                      'email': self.email,
                      'name': self.name,
-                     'level': self.level,
-                     'password': self.password}
+                     'level': self.level}
 
         return user_dict

@@ -8,7 +8,7 @@ class UserManager:
     @classmethod
     def get_all_users(cls) -> List[User]:
         raw_users = UserDBManager.get_all_users()
-        users = [User(raw_user) for raw_user in raw_users]
+        users = [User(*raw_user) for raw_user in raw_users]
 
         return users
 

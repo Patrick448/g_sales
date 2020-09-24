@@ -2,6 +2,7 @@ import sqlite3
 import json
 import logging
 from typing import Dict, List, Tuple
+from .sqlite_connection import SQLiteConnection, SQLiteCursor
 
 logger = logging.getLogger('app.db_manager')
 
@@ -15,19 +16,19 @@ class OrderDBManager:
         cursor = connection.cursor()
 
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS orders (id integer primary key, user integer, date integer, total real, items text)")
+            "CREATE TABLE IF NOT EXISTS orders (id integer primary key, user integer, date integer, total real, items text, status integer)")
         logger.info(f"Table orders created in {cls.DATABASE} if it does not exist")
         connection.commit()
         connection.close()
 
     @classmethod
-    def save_order(cls, user: int, date, items, total):
+    def save_order(cls, user: int, date, items, total, status):
 
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
 
-        cursor.execute("INSERT INTO orders (user, date, total, items) VALUES (?, ?, ?, ?)",
-                       (user, date, total, json.dumps(items)))
+        cursor.execute("INSERT INTO orders (user, date, total, items, status) VALUES (?, ?, ?, ?, ?)",
+                       (user, date, total, json.dumps(items), status))
         logger.info(f"Saving order to {cls.DATABASE}. User: {user}.")
 
         connection.commit()
@@ -85,7 +86,13 @@ class OrderDBManager:
         connection.close()
 
         return results
-
+    
+    @classmethod
+    def _run_test_function(cls):
+        """
+        This function should be used when you want to run a one-time code, correction etc
+        """
+ 
 
     @classmethod
     def get_order_by_id(cls, user_id: int, order_id: int) -> List[Tuple]:
@@ -105,7 +112,7 @@ class OrderDBManager:
     def get_orders(cls, order_id:int = None, user_id: int = None, user_name: str = None, time_stamp: int = None, time_from: int = None, time_to: int = None) -> \
             List[Tuple]:
         
-        sqlite_command = """SELECT orders.id, user, date, total, items, users.name
+        sqlite_command = """SELECT orders.id, user, date, total, items, orders.status, users.name
                             FROM orders LEFT JOIN users_db.users ON orders.user = users.id 
                             WHERE """
         command_list = []
@@ -115,6 +122,7 @@ class OrderDBManager:
         cursor = connection.cursor()
         
         cursor.execute("ATTACH DATABASE ? AS users_db", ("users.db", ))
+
 
         if user_id:
             command_list.append("users.id=?")
@@ -224,17 +232,26 @@ class ProductDBManager:
         cursor.execute("SELECT * FROM products")
         products = cursor.fetchall()
 
-        products_dict_list = []
-
-        for product in products:
-            products_dict_list.append({"id": product[0],
-                                       "name": product[1],
-                                       "category": product[2],
-                                       "unit": product[3],
-                                       })
 
         logger.info(f"Getting all products from {cls.DATABASE}")
         connection.commit()
+        connection.close()
+
+        return products
+
+    @classmethod
+    def get_all_products_full(cls) -> List[Dict]:
+        connection = sqlite3.connect(cls.DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute("""SELECT products.id, name, category, unit, price 
+            FROM products LEFT OUTER JOIN available on available.id = products.id""")
+
+        products = cursor.fetchall()
+
+        logger.info(f"Getting all products' full info from {cls.DATABASE}")
+        connection.commit()
+
         connection.close()
 
         return products
@@ -252,18 +269,19 @@ class ProductDBManager:
         available_product = cursor.fetchone()
 
         if product and not available_product:
-            cursor.execute(f"INSERT INTO available (id, price) VALUES (?, ?)", (id, price))
+            cursor.execute("INSERT INTO available (id, price) VALUES (?, ?)", (id, price))
             logger.info(f"Product {product[1]} inserted into available list")
 
-        elif product:
-            logger.warning(f"Failed. Product {product[1]} already inserted into available list")
+        elif available_product:
+            cursor.execute("UPDATE available SET price=? WHERE id=?", (price, id))
+            logger.warning(f"Product {product[1]} already inserted into available list. Updated")
 
         connection.commit()
         connection.close()
 
 
     @classmethod
-    def get_available_products(cls) -> List[Dict]:
+    def get_available_products(cls) -> Tuple:
         connection = sqlite3.connect(cls.DATABASE)
         cursor = connection.cursor()
 
@@ -272,6 +290,7 @@ class ProductDBManager:
             FROM products JOIN available on products.id = available.id""")
         products = cursor.fetchall()
 
+        """
         products_dict_list = []
 
         for product in products:
@@ -280,7 +299,7 @@ class ProductDBManager:
                                        "category": product[2],
                                        "unit": product[3],
                                        "price": product[4]
-                                       })
+                                       })"""
 
         logger.info(f"Getting all available products from {cls.DATABASE}")
         connection.commit()
@@ -288,6 +307,15 @@ class ProductDBManager:
 
         return products
 
+    @classmethod
+    def delete_all_available_products(cls):
+        connection = sqlite3.connect(cls.DATABASE)
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM available")
+
+        connection.commit()
+        connection.close()
+    
 
 
 class UserDBManager:

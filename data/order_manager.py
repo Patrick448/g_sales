@@ -4,8 +4,8 @@ from typing import List
 
 class OrderManager:
     @classmethod
-    def save_order(cls, user: int, date: int, items: List, total: float):
-        OrderDBManager.save_order(user, date, items, total)
+    def save_order(cls, user: int, date: int, items: List, total: float, status: int):
+        OrderDBManager.save_order(user, date, items, total, status)
 
     @classmethod
     def get_all_orders(cls) -> List[Order]:

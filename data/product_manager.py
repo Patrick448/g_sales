@@ -27,7 +27,17 @@ class ProductManager:
         raw_products = ProductDBManager.get_available_products()
         products = [Product(*raw_product) for raw_product in raw_products]
         return products
+    
+    @classmethod
+    def delete_all_available_products(cls):
+        ProductDBManager.delete_all_available_products()
+
+    @classmethod
+    def get_all_products_full(cls):
+        raw_products = ProductDBManager.get_all_products_full()
+        products = [Product(*raw_product) for raw_product in raw_products]
         
+        return products
 
     
     

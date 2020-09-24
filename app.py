@@ -1,6 +1,7 @@
 import json
 import logging
 import datetime
+from flask_cors import CORS
 from flask import Flask, request, render_template, redirect, flash, url_for
 from data.data import DataManager
 from utils.db_manager import OrderDBManager, ProductDBManager, UserDBManager
@@ -9,6 +10,7 @@ from data.user import User
 from data.user_manager import UserManager
 from data.product_manager import ProductManager
 from data.order_manager import OrderManager
+
 
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
@@ -22,6 +24,8 @@ app.secret_key = "82dhgf68h5d2d250fs5gd40f"
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
+cors = CORS(app)
 
 OrderDBManager.create_table_orders()
 ProductDBManager.create_table_products()
@@ -61,10 +65,39 @@ def login():
             return redirect(next or url_for('home'))
         else:
             return redirect(url_for('login', next=next, error=True))
+            
 
     return render_template('login.html')
 
+@app.route('/check-logged-in')
+def check_logged_in():
+    return {"logged_in": current_user.is_authenticated}
 
+@app.route('/test-login', methods=['GET', 'POST'])
+def test_login():
+
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = UserManager.get_user(email=email)
+        next = request.args.get('next')
+
+        if user and (user.password == password):
+            login_user(user)
+
+            flash('Logged in successfully.')
+            print(f"username: {user.email} auth: {user.is_authenticated}")
+
+            print(f"next: {next}")
+
+            return "ok", 200
+        else:
+            return "Usuário ou senha incorretos", 401
+            
+
+    return render_template('login.html')
+
+# registar antigo, ver novo: registrar2
 @app.route('/registrar', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -73,6 +106,7 @@ def register():
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
+        
         if UserManager.get_user(email=email):
             return redirect(url_for('registrar', email_error=True))
         elif password != confirm_password:
@@ -83,10 +117,30 @@ def register():
 
     return render_template('registrar.html')
 
+@app.route('/registrar2', methods=['GET', 'POST'])
+def register2():
+    if request.method == 'POST':
+        email = request.form['email']
+        name = request.form['name']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if not (email and name and password and confirm_password):
+            return "Todos os campos são obrigatórios", 401
+        elif password != confirm_password:
+            return "As duas senhas inseridas são diferentes", 401
+        elif UserManager.get_user(email=email):
+            return "Email já cadastrado.", 401
+        else:
+            UserManager.add_user(email, name, 1, password)
+            return "Registrado", 200
+
+    return render_template('registrar.html')
 
 @app.route('/logout')
 @login_required
 def logout():
+    logger.debug(f"User {current_user.name} logging out")
     logout_user()
     return redirect(url_for('login'))
 
@@ -109,6 +163,7 @@ def new_order_page():
 
 
 @app.route('/pedido/get-list')
+@login_required
 def get_today_list():
     products_list = ProductManager.get_available_products()
     products_dicts = [product.to_dict() for product in products_list]
@@ -127,11 +182,12 @@ def save_order():
 @app.route('/save-order', methods=['POST'])
 def save_order_db():
     order = request.get_json()['order']
+   
     date = int(datetime.datetime.now().timestamp()*1000)
     items = order['items']
     total = order['total']
 
-    OrderManager.save_order(int(current_user.get_id()), date, items, total)
+    OrderManager.save_order(int(current_user.get_id()), date, items, total, 0)
     
     return "1"
 
@@ -184,7 +240,42 @@ def get_orders_filter_admin():
     orders = OrderManager.get_orders(user_name=name, order_id=order_id, time_from=time_from, time_to=time_to)
     orders_dicts = [order.to_dict() for order in orders]
 
+    return json.dumps(orders_dicts, ensure_ascii= False).encode('utf8')
+
+
+@app.route('/admin_get_orders_today')
+def get_orders_today():
+    today = datetime.date.today()
+    midnight = datetime.datetime.combine(today, datetime.datetime.min.time())
+    time_from = int(midnight.timestamp()) * 1000
+    day_in_millis = 86400000
+    time_to = time_from + day_in_millis
+
+    orders = OrderManager.get_orders(time_from=time_from, time_to=time_to)
+    orders_dicts = [order.to_dict() for order in orders]
+
     return json.dumps(orders_dicts, ensure_ascii=False).encode('utf8')
+
+@app.route('/set-available', methods=['POST'])
+def set_available_products():
+    ProductManager.delete_all_available_products()
+    items = request.get_json()['items']
+    for item in items:
+        ProductManager.add_available_product(id=item['id'], price=item['price'])
+    
+    return "OK", 201
+
+@app.route('/get-all-products')
+def get_all_products():
+    products = ProductManager.get_all_products()
+    products_dict_list = [product.to_dict() for product in products]
+    return json.dumps(products_dict_list, ensure_ascii=False).encode('utf8')
+
+@app.route('/get-all-products-full')
+def get_all_products_full():
+    products = ProductManager.get_all_products_full()
+    products_dict_list = [product.to_dict() for product in products]
+    return json.dumps(products_dict_list, ensure_ascii=False).encode('utf8')
 
 @app.route('/verify-order', methods=['POST'])
 def verify_order():
@@ -202,20 +293,20 @@ def verify_order():
 
     return pre_saved
 
-
+@app.route('/x')
 def test_populate_products():
-    products = [{"name": "Banana", "category": 1, "unit": "CX"},
-                {"name": "Maçã", "category": 1, "unit": "CX"},
-                {"name": "Melancia", "category": 1, "unit": "UN"},
-                {"name": "Batata", "category": 1, "unit": "CX"},
-                {"name": "Cenoura", "category": 1, "unit": "CX"},
-                {"name": "Alface", "category": 1, "unit": "UN"},
-                {"name": "Agrião", "category": 1, "unit": "UN"},
-                {"name": "Tomate", "category": 1, "unit": "CX"},
-                {"name": "Laranja", "category": 1, "unit": "CX"},
-                {"name": "Inhame", "category": 1, "unit": "CX"},
-                {"name": "Couve", "category": 1, "unit": "CX"},
-                {"name": "Beterraba", "category": 1, "unit": "CX"}]
+    products = [{"name": "Morango", "category": 1, "unit": "CX"},
+                {"name": "Chuchu", "category": 1, "unit": "CX"},
+                {"name": "Chicória", "category": 1, "unit": "UN"},
+                {"name": "Abóbora", "category": 1, "unit": "CX"},
+                {"name": "Manga", "category": 1, "unit": "CX"},
+                {"name": "Uva", "category": 1, "unit": "UN"},
+                {"name": "Espinafre", "category": 1, "unit": "UN"},
+                {"name": "Poncan", "category": 1, "unit": "CX"},
+                {"name": "Vagem", "category": 1, "unit": "CX"},
+                {"name": "Jiló", "category": 1, "unit": "CX"},
+                {"name": "Repolho", "category": 1, "unit": "CX"},
+                {"name": "Milho", "category": 1, "unit": "CX"}]
 
     for product in products:
         ProductDBManager.add_product(**product)
@@ -251,12 +342,21 @@ def test_users():
 
     return json.dumps(UserDBManager.get_user(1))
 
+@app.route('/test', methods=["POST"])
+def test1():
+    data = request.form
+    print(data)
+
+    return "failed", 401
+    
+
+
 @app.route('/x')
 def test():
     return f"{int(datetime.datetime.now().timestamp()*1000)}"
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
+    app.run(debug=True, host='0.0.0.0')
+    
 
 

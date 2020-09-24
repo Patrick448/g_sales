@@ -1,28 +1,24 @@
-ordersTab = function(){
+todayTab = function(){
 
-let startFilterButton = document.getElementById("filter-start-button");
-startFilterButton.onclick = filterOrders; // get_orders_by_date_filter; 
+let startFilterButton = document.getElementById("hoje-filter-start-button");
+startFilterButton.onclick = filterOrders;
 
-let startDatePicker = document.getElementById("filter-start-date");
-let endDatePicker = document.getElementById("filter-end-date");
-let orderNumInput = document.getElementById("filter-order-num");
-let customerNameInput = document.getElementById("filter-customer");
+let orderNumInput = document.getElementById("hoje-filter-order-num");
+let customerNameInput = document.getElementById("hoje-filter-customer");
 
-
-
-startDatePicker.valueAsNumber = new Date();
-endDatePicker.valueAsNumber = new Date();
-
-let modalSpan = document.getElementById("order-modal-close");
-let modal = document.getElementById("order-modal");
-let modalFinish = document.getElementById("modal_concluir");
-let modalTitle = document.getElementById("order-modal-title");
+let modalSpan = document.getElementById("today-modal-close");
+let modal = document.getElementById("hoje-order-modal");
+let modalFinish = document.getElementById("hoje-modal-concluir");
+let modalTitle = document.getElementById("hoje-order-modal-title");
+let modalBody = document.getElementById("hoje-modal-body");
+let modalTotal =document.getElementById("hoje-modal-total");
 
 let orderList;
 let numPedidos = localStorage.storedItems;
 
 // When the user clicks on <span> (x), close the modal
 modalSpan.onclick = function() {
+
   modal.style.display = "none";
 }
 
@@ -42,7 +38,7 @@ function setOrdersTable(){
 
         let pedido = orderList[key];
 
-        tableOrders += `<tr id=order-page-${pedido.id} data-timestamp="${pedido.timeStamp}" onClick="ordersTab.orderInfo(${pedido.id})">    
+        tableOrders += `<tr id=order-page-${pedido.id} data-timestamp="${pedido.timeStamp}" onClick="todayTab.orderInfo(${pedido.id})">    
                             <td>${pedido.id}</td>
                             <td>${pedido.user_name}</td>
                             <td>${formattedDate(pedido.timeStamp)}</td>
@@ -52,7 +48,7 @@ function setOrdersTable(){
     }
   
     tableOrders+= '</tbody>';
-    document.getElementById("pedidos-table").innerHTML=tableOrders;
+    document.getElementById("hoje-table").innerHTML=tableOrders;
 
 }
 
@@ -62,7 +58,7 @@ this.orderInfo = function(id){
       return item.id == id;
     });
 
-    setOrderModal(elementInList)
+    setOrderModal(elementInList, modalBody, modalTotal)
 }
 
 function setOrderModal(order){
@@ -98,8 +94,8 @@ function setOrderModal(order){
   modalTable+= `  </tbody>
                 </table>`;
 
-  document.getElementById("modal_body").innerHTML=modalTable;
-  document.getElementById("modal_total").innerHTML= "R$ "+formatMoney(totalValue);
+  document.getElementById("hoje-modal-body").innerHTML=modalTable;
+  document.getElementById("hoje-modal-total").innerHTML= "R$ "+formatMoney(totalValue);
 
 }
 
@@ -113,7 +109,7 @@ function filterOrders(){
 
    $.ajax({
       type:"GET",
-      url:`/admin_get_orders/filter/?time_from=${timeFrom}&time_to=${timeTo}&name=${customerName}&num=${orderNum}`,
+      url:`/admin_get_orders_today/?time_from=${timeFrom}&time_to=${timeTo}&name=${customerName}&num=${orderNum}`,
       success: function(data){
           parsed_data = JSON.parse(data)
           orderList = parsed_data
@@ -124,8 +120,25 @@ function filterOrders(){
 
 }
 
+function getTodaysOrders(){
 
-setOrdersTable();
+    $.ajax({
+        type:"GET",
+        url:`/admin_get_orders_today`,
+        success: function(data){
+            parsed_data = JSON.parse(data)
+            orderList = parsed_data
+            setOrdersTable()
+  
+        }
+    });
+
 }
 
-ordersTab = new ordersTab();
+
+setOrdersTable();
+getTodaysOrders();
+}
+
+todayTab = new todayTab();
+

@@ -30,7 +30,40 @@
             <button class="tab-button" onclick="openTab(event, 'tab-clientes')">Clientes</button>
         </div>
         <div class="tab-content" id="tab-hoje">
-            <h1>Hoje</h1>
+            <div>
+                <div class="filter-div">
+                    <label for="hoje-filter-customer">Cliente&nbsp&nbsp</label>
+                    <input class="text-input" type="text" id="hoje-filter-customer" name="trip-start">
+
+                    <label for="hoje-filter-order-num">Pedido&nbsp&nbsp</label>
+                    <input class="text-input" type="text" id="hoje-filter-order-num" name="trip-start">
+
+                    <button class="btn btn-light" id="hoje-filter-start-button">Filtrar</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="table" id="hoje-table">
+                
+                </table>
+            </div>
+              
+            <div id="hoje-order-modal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header-custom">
+                        <span class="close" id="today-modal-close">&times;</span>
+                        <h2 class="modal-title" id="hoje-order-modal-title">Ver pedido</h2>
+                    </div>
+                    <div id="hoje-modal-body" class="modal-body">
+                        <p>Banana</p>
+                        <p>Some other text...</p>
+                    </div>
+                    <div class="modal-footer-custom">
+                        <h2 id="hoje-modal-total" class="modal-total">Total: 0,00</h2>
+                        <button id="hoje-modal-concluir" class="btn btn-light">Enviar Pedido</button>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="tab-content" id="tab-pedidos">
@@ -53,7 +86,7 @@
                 </div>
             </div>
             <div class="table-container">
-                <table class="table" id="hoje-table">
+                <table class="table" id="pedidos-table">
                 
                 </table>
             </div>
@@ -62,7 +95,7 @@
                 <!-- Modal content -->
                 <div class="modal-content">
                     <div class="modal-header-custom">
-                        <span class="close">&times;</span>
+                        <span class="close" id="order-modal-close">&times;</span>
                         <h2 class="modal-title" id="order-modal-title">Ver pedido</h2>
                     </div>
                     <div id="modal_body" class="modal-body">
@@ -91,6 +124,7 @@
     <script src="/static/js/tabs.js"></script>
     <script src="static/js/util.js"></script>
     <script src="/static/js/adminPanel.js"></script>
+    <script src="/static/js/tabToday.js"></script>
 
 </body>
 </html>
